@@ -1,139 +1,194 @@
 <!doctype html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Resolve Loop · AI Support Operating Model Emulator</title>
-<meta name="description" content="Interactive emulator of an AI-augmented global payroll support operating model: AI triage, telemetry investigation, governed human approval, knowledge capture and a 30/60/90-day Head of Support plan." />
+<title>Resolve Loop · Autonomous Global Payroll Support Desk</title>
+<meta name="description" content="A live, self-running simulation of a global payroll support desk: AI triage, investigation, governed human approval, JIRA-style tickets and knowledge capture. Built for the Papaya Global Head of Support role. Synthetic data." />
 <style>
-:root{color-scheme:dark;--bg:#12161c;--panel:#1a2029;--line:#2b3441;--ink:#e8ecf1;--mute:#98a3b3;--acc:#7aa7ff;--warn:#e8b04a;--ok:#6fcf97;--bad:#ef7b7b}
+:root{color-scheme:dark;--bg:#0d0826;--panel:#171040;--panel2:#1f1752;--line:#2f2670;--ink:#f5f2ff;--mute:#a9a2d8;--vio:#7b4dff;--cor:#ff6a3d;--amb:#ffb020;--ok:#35d49a;--bad:#ff5c6c;--grad:linear-gradient(135deg,#7b4dff,#ff6a3d)}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif}
-h1,h2,h3{font-family:"Iowan Old Style",Georgia,serif;font-weight:600;margin:0 0 .4em;line-height:1.2}
-h1{font-size:2rem}h2{font-size:1.45rem}h3{font-size:1.05rem}
-header{padding:1.5rem clamp(1rem,4vw,3rem) .5rem;max-width:1100px;margin:auto}
-header p{color:var(--mute);max-width:62ch;margin:.3rem 0 0}
-nav{display:flex;gap:.4rem;flex-wrap:wrap;padding:.8rem clamp(1rem,4vw,3rem);max-width:1100px;margin:auto;border-bottom:1px solid var(--line)}
-nav button{background:none;border:1px solid var(--line);color:var(--mute);padding:.4rem .8rem;border-radius:6px;cursor:pointer;font:inherit}
-nav button[aria-current=true]{background:var(--acc);color:#0c1220;border-color:var(--acc);font-weight:600}
-button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--warn);outline-offset:2px}
-main{max-width:1100px;margin:auto;padding:1.2rem clamp(1rem,4vw,3rem) 3rem}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:1rem 1.1rem}
-.card button.go{margin-top:.6rem;background:none;border:0;color:var(--acc);cursor:pointer;padding:0;font:inherit}
-.kpi{display:flex;gap:1.2rem;margin:.5rem 0}.kpi b{display:block;font-size:1.3rem}.kpi span{color:var(--mute);font-size:.8rem}
-table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:.5rem .6rem;border-bottom:1px solid var(--line);vertical-align:top}
-th{color:var(--mute);font-weight:500;font-size:.85rem}
-tr.sel{background:#202938}tr[data-i]{cursor:pointer}
-.tag{display:inline-block;padding:.05rem .5rem;border-radius:99px;border:1px solid var(--line);font-size:.8rem}
-.sev3{color:var(--bad);border-color:var(--bad)}.sev2{color:var(--warn);border-color:var(--warn)}.sev1{color:var(--ok);border-color:var(--ok)}
-pre{background:#0d1117;border:1px solid var(--line);border-radius:6px;padding:.8rem;overflow-x:auto;font-size:.82rem;margin:.5rem 0;color:#c9d4e3}
-.bar{height:10px;background:var(--line);border-radius:5px;overflow:hidden}.bar i{display:block;height:100%;background:var(--acc)}
-.row{display:flex;justify-content:space-between;gap:1rem;align-items:center;margin:.5rem 0}
-.note{color:var(--mute);font-size:.88rem}.sim{color:var(--warn);font-size:.78rem}
-.btn{background:var(--acc);color:#0c1220;border:0;border-radius:6px;padding:.45rem .9rem;font:inherit;font-weight:600;cursor:pointer}
-.btn.alt{background:none;border:1px solid var(--line);color:var(--ink)}
-input[type=range]{width:100%;accent-color:var(--acc)}
+body{margin:0;background:radial-gradient(1200px 500px at 85% -10%,#2a1670 0,transparent 60%),radial-gradient(900px 400px at -10% 0,#4a1a5c55 0,transparent 60%),var(--bg);color:var(--ink);font:15px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;min-height:100vh}
+h1,h2,h3{margin:0 0 .4em;line-height:1.2;font-weight:700;letter-spacing:-.01em}h1{font-size:1.7rem}h2{font-size:1.3rem}h3{font-size:1rem}
+.wrap{max-width:1180px;margin:auto;padding:0 clamp(1rem,3vw,2rem)}
+header{padding:1.2rem 0 .6rem;display:flex;gap:.9rem;align-items:center;flex-wrap:wrap}
+.logo{width:44px;height:44px;border-radius:14px;background:var(--grad);box-shadow:0 6px 24px #7b4dff66;display:grid;place-items:center;font-weight:800;font-size:1.3rem}
+header p{margin:0;color:var(--mute);font-size:.9rem;max-width:70ch}
+.live{margin-left:auto;display:flex;align-items:center;gap:.5rem;font-size:.82rem;color:var(--mute)}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 0 #35d49a99;animation:p 1.6s infinite}.off .dot{background:var(--amb);animation:none}
+@keyframes p{70%{box-shadow:0 0 0 9px #35d49a00}}
+.ctl{position:sticky;top:0;z-index:5;background:#0d0826ee;backdrop-filter:blur(8px);border-block:1px solid var(--line);padding:.55rem 0}
+.ctl .wrap{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center}
+button,select{font:inherit;color:var(--ink)}
+.b{background:var(--panel2);border:1px solid var(--line);padding:.35rem .75rem;border-radius:8px;cursor:pointer;font-size:.85rem}
+.b:hover{border-color:var(--vio)}.b.on{background:var(--grad);border-color:transparent;font-weight:700}
+.b.ok{background:var(--ok);color:#06231a;border-color:var(--ok);font-weight:700}.b.no{background:none;border-color:var(--bad);color:var(--bad)}
+select{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:.33rem .5rem;font-size:.85rem;max-width:210px}
+.pend{background:var(--cor);color:#fff;border-radius:99px;padding:.05rem .5rem;font-weight:700;font-size:.8rem}
+nav{display:flex;gap:.3rem;flex-wrap:wrap;padding:.7rem 0}
+nav button{background:none;border:1px solid transparent;color:var(--mute);padding:.4rem .8rem;border-radius:8px;cursor:pointer}
+nav button.cur{background:var(--panel2);border-color:var(--vio);color:var(--ink);font-weight:600}
+main{padding-bottom:3rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.9rem}.g2{grid-template-columns:repeat(auto-fit,minmax(330px,1fr))}
+.card{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:12px;padding:1rem 1.1rem}
+.k b{display:block;font-size:1.7rem;letter-spacing:-.02em}.k span{color:var(--mute);font-size:.8rem}
+.k.hot b{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.note{color:var(--mute);font-size:.86rem}
+table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:.5rem .6rem;border-bottom:1px solid var(--line);vertical-align:top;font-size:.9rem}th{color:var(--mute);font-weight:500;font-size:.8rem}
 .scroll{overflow-x:auto}
-footer{text-align:center;color:var(--mute);font-size:.82rem;padding:1.5rem}
-@media(prefers-reduced-motion:no-preference){.bar i{transition:width .4s}}
+.bar{height:8px;background:var(--line);border-radius:5px;overflow:hidden}.bar i{display:block;height:100%;background:var(--grad);transition:width .5s}
+.row{display:flex;justify-content:space-between;gap:1rem;align-items:center;margin:.4rem 0}
+.feed div{padding:.35rem 0;border-bottom:1px dashed var(--line);font-size:.86rem}.feed code{color:var(--cor);font-weight:600;cursor:pointer}
+.tag{display:inline-block;padding:.05rem .55rem;border-radius:99px;border:1px solid var(--line);font-size:.78rem;color:var(--mute)}
+.board{display:grid;grid-template-columns:repeat(5,minmax(190px,1fr));gap:.7rem;overflow-x:auto}
+.col{background:#120c35;border:1px solid var(--line);border-radius:10px;padding:.6rem;min-height:200px}.col h3{font-size:.75rem;text-transform:uppercase;color:var(--mute);letter-spacing:.05em}
+.tc{background:var(--panel2);border:1px solid var(--line);border-left:3px solid var(--vio);border-radius:8px;padding:.55rem .6rem;margin:.45rem 0;font-size:.82rem;cursor:pointer}.tc:hover{border-color:var(--cor)}.tc.p{border-left-color:var(--cor);box-shadow:0 0 0 1px #ff6a3d55}
+.tc small{color:var(--mute)}
+/* JIRA-style light surface */
+.jira{background:#fff;color:#172b4d;border-radius:12px;padding:1rem 1.3rem;box-shadow:0 12px 40px #0006;font-size:.9rem}
+.jira h2{color:#172b4d;font-size:1.35rem;margin:.2rem 0 .6rem}.jira h3{color:#5e6c84;font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;margin:1rem 0 .4rem}
+.jb{color:#5e6c84;font-size:.8rem}.jb b{color:#0052cc}
+.lz{font-size:.7rem;font-weight:700;text-transform:uppercase;padding:.12rem .45rem;border-radius:3px;display:inline-block}
+.s0{background:#dfe1e6;color:#42526e}.s1,.s2{background:#deebff;color:#0747a6}.s3{background:#ffe2bd;color:#974f0c}.s4{background:#e3fcef;color:#006644}.s5{background:#ffebe6;color:#bf2600}
+.jg{display:grid;grid-template-columns:minmax(0,1fr) 270px;gap:1.4rem}@media(max-width:820px){.jg{grid-template-columns:1fr}}
+.jira pre{background:#f4f5f7;color:#172b4d;border-radius:4px;padding:.6rem;overflow-x:auto;font-size:.76rem;margin:.3rem 0;white-space:pre-wrap}
+.jp{border:1px solid #dfe1e6;border-radius:6px;padding:.3rem .8rem}.jp div{display:flex;justify-content:space-between;gap:.6rem;padding:.4rem 0;border-bottom:1px solid #f0f1f3}.jp div:last-child{border:0}.jp span{color:#5e6c84}.jp b{text-align:right;font-weight:500}
+.cm{display:flex;gap:.6rem;margin:.7rem 0}.av{flex:none;width:30px;height:30px;border-radius:50%;background:#0052cc;color:#fff;display:grid;place-items:center;font-size:.7rem;font-weight:700}.av.ai{background:var(--grad)}.av.h{background:#006644}
+.cm p{margin:.15rem 0 0;white-space:pre-wrap}.cm small{color:#5e6c84}
+.chips{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:.7rem}
+.jira .b{background:#f4f5f7;border-color:#dfe1e6;color:#172b4d}.jira .b.ok{background:#00875a;color:#fff;border-color:#00875a}.jira .b.no{background:#fff;color:#bf2600;border-color:#bf2600}
+.pulse{animation:q 1.4s infinite}@keyframes q{50%{box-shadow:0 0 0 4px #ff6a3d55}}
+pre.dk{background:#0a0620;border:1px solid var(--line);border-radius:8px;padding:.8rem;font-size:.8rem;white-space:pre-wrap;color:#d9d3ff}
+input[type=range]{width:100%;accent-color:var(--cor)}
+footer{text-align:center;color:var(--mute);font-size:.8rem;padding:1.5rem}
+button:focus-visible,select:focus-visible{outline:2px solid var(--amb);outline-offset:2px}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
-<header>
-<h1>Resolve Loop</h1>
-<p>An interactive model of how I would run a global payroll technical support organisation in an AI-first way: faster decisions, governed autonomy, and every resolved case feeding the next one.</p>
-</header>
-<nav id="nav" aria-label="Modules"></nav>
-<main id="view" tabindex="-1"></main>
-<footer>Illustrative simulation. All data and AI outputs are fictional.</footer>
+<div class="wrap"><header>
+<div class="logo">R</div>
+<div><h1>Resolve Loop</h1><p>An autonomous global payroll support desk. Tickets arrive, get triaged and investigated by AI, and anything touching money or pay data stops for a human. Watch it run, or take the wheel.</p></div>
+<div class="live" id="live"><span class="dot"></span><span id="clk"></span></div>
+</header></div>
+<div class="ctl"><div class="wrap">
+<button class="b on" id="ap" data-a="tog">⏸ Autopilot ON</button>
+<button class="b" data-a="step">Step ▸</button>
+<select id="spd" aria-label="Speed"><option value="1800">Speed 1x</option><option value="900">Speed 2x</option><option value="3600">Speed 0.5x</option></select>
+<button class="b on" id="hf" data-a="hf">Hands-free demo: ON</button>
+<select id="injs" aria-label="Scenario"></select><button class="b" data-a="inj">⚡ Inject incident</button>
+<button class="b" data-a="rst">Reset</button>
+<span style="margin-left:auto" class="note">Awaiting approval <span class="pend" id="pend">0</span></span>
+</div></div>
+<div class="wrap"><nav id="nav" aria-label="Modules"></nav><main id="view"></main></div>
+<footer>Synthetic simulation built as a portfolio piece. All customers, tickets, logs and figures are fictional. Not affiliated with or endorsed by Papaya Global; colours are inspired by its brand.</footer>
 
 <script>
-const $=s=>document.querySelector(s);
-const tickets=[
-{id:"T-1041",t:"Pay run failed for Brazil entity",c:"Payments",sev:3,tier:"Payment Services",reg:"Americas",conf:94,sla:2,ai:"Bank file rejected: invalid CNPJ format. Matches 3 prior cases."},
-{id:"T-1042",t:"UK tax code mismatch on 12 employees",c:"Compliance",sev:2,tier:"Tier 2",reg:"EMEA",conf:81,sla:6,ai:"Tax code sync lag after HMRC update. Re-sync proposed."},
-{id:"T-1043",t:"How do I add a new cost centre?",c:"How-to",sev:1,tier:"Tier 1",reg:"India",conf:98,sla:24,ai:"Answered from KB-212. Eligible for self-service deflection."},
-{id:"T-1044",t:"Webhook not firing for approved timesheets",c:"Integration/API",sev:2,tier:"Tier 2",reg:"India",conf:67,sla:8,ai:"Low confidence: possible retry-queue backlog. Routed to human."},
-{id:"T-1045",t:"FX payout delayed to Philippines",c:"Payments",sev:3,tier:"Payment Services",reg:"EMEA",conf:72,sla:3,ai:"Partner bank cut-off missed. Needs human approval before any retry."}];
-const logs={
-"T-1041":["09:02:11 payrun-svc ERROR bank_file validation failed field=CNPJ","09:02:11 payrun-svc WARN retry 1/3 skipped (non-retryable)","09:02:12 notify-svc INFO alert sent to payments-oncall"],
-"T-1042":["08:40:03 tax-svc WARN code S1257L not in cache","08:40:03 tax-svc INFO cache refresh deferred (job lag 38m)"],
-"T-1043":["10:11:20 kb-svc INFO match KB-212 score=0.97"],
-"T-1044":["11:30:44 hook-svc ERROR 503 from consumer endpoint","11:30:44 queue-svc WARN retry depth=1840 (threshold 500)","11:31:02 hook-svc INFO backoff 64s"],
-"T-1045":["07:55:09 payout-svc WARN partner cut-off 06:00Z missed","07:55:10 payout-svc INFO status=HELD awaiting approval"]};
-const sql={"T-1041":"SELECT entity_id, field, value FROM bank_file_errors\nWHERE run_id = 'R-8812';\n-- 41 rows: all CNPJ missing check digits",
-"T-1042":"SELECT code, COUNT(*) FROM employee_tax\nWHERE sync_status='STALE' GROUP BY code;\n-- S1257L: 12 rows",
-"T-1043":"-- No query needed","T-1044":"SELECT status, COUNT(*) FROM webhook_events\nWHERE type='timesheet.approved' GROUP BY status;\n-- PENDING_RETRY: 1840",
-"T-1045":"SELECT payout_id, status FROM payouts\nWHERE country='PH' AND status='HELD';\n-- 27 payouts held"};
-const actions=[["Draft reply to customer",1,"Suggests"],["Re-sync tax tables",2,"Acts with approval"],["Retry failed webhook queue",2,"Acts with approval"],["Publish KB article",2,"Acts with approval"],["Tag and route Tier 1 how-to",3,"Acts alone"],["Retry or release a payment",1,"Human only"],["Change employee pay data",1,"Human only"]];
-const issues=[["Bank file validation errors (LATAM)",212,"Product: field validation at entry","In build",-60],["Tax sync lag after statutory updates",148,"R&D: refresh job priority","Planned",-45],["Webhook retry queue backlog",96,"R&D: autoscaling consumers","Investigating",-70],["Confusing cost centre setup",74,"Product: guided setup","Backlog",-50]];
-const plan=[["Days 1-30: Learn",["Review SLA, backlog and reopen data by region and tier","Shadow escalations with R&D and Product","Baseline deflection AND confirmed resolution","Map skills of every Tier 1, Tier 2 and Payment Services agent"]],
-["Days 31-60: Stabilise",["Fix shift coverage gaps across India, EMEA and Americas","Launch weekly root-cause review with R&D","Define the approval matrix for AI actions","Standard case documentation template"]],
-["Days 61-90: Scale",["Roll out AI triage with a human-in-the-loop on payments","Turn top 20 resolved cases into KB and self-service content","Publish roadmap asks ranked by case reduction","Start domain-expert career path"]]];
-const maps=[["strategy","Leadership & strategy","Support strategy tied to the product roadmap","3 phases","30/60/90"],["ops","Operational excellence","SLAs, shifts and repeat cases under control","SLA 94%","Repeat 11%"],["tech","Technical escalations","Logs, SQL and API traces to a root cause","MTTR 3.1h","Tier 2 backlog 18"],["roadmap","Cross-functional","Root causes turned into R&D and Product work","4 asks","-60% cases"],["kb","Knowledge & CX","Every case becomes an article or self-service","Defl. 58%","Resolved 41%"],["gov","AI-first operations","Autonomy with human approval where risk is high","7 actions","Full audit"]];
-const S={tab:"home",tick:0,log:[],audit:[],kb:{drafted:false,reviewed:false,pub:false}};
-const tabs=[["home","Overview"],["triage","Triage"],["tech","Investigate"],["gov","Governance"],["kb","Knowledge"],["ops","Ops"],["roadmap","Roadmap"],["strategy","30/60/90"],["sim","What-if"]];
-const esc=s=>String(s).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
-const sev=n=>`<span class="tag sev${n}">${["","Low","Medium","High"][n]}</span>`;
-
-function nav(){const n=$("#nav");n.innerHTML=tabs.map(([k,l])=>`<button data-t="${k}" aria-current="${S.tab===k||(S.tab==="kb"&&k==="kb")}">${l}</button>`).join("");
-n.querySelectorAll("button").forEach(b=>b.onclick=()=>go(b.dataset.t));}
-function go(t){S.tab=t;location.hash=t;render();$("#view").focus({preventScroll:true});}
-function render(){nav();const v=$("#view");v.innerHTML=({home,triage,tech,gov,kb,ops,roadmap,strategy,sim}[S.tab]||home)();bind();}
-
-function home(){return `<h2>The mandate at a glance</h2><p class="note">Six areas a Head of Support owns. Open each to see how I would run it.</p><div class="grid">`+
-maps.map(m=>`<div class="card"><h3>${m[1]}</h3><p>${m[2]}</p><div class="kpi"><div><b>${m[3]}</b><span>simulated</span></div><div><b>${m[4]}</b><span>simulated</span></div></div><button class="go" data-t="${m[0]}">Open module</button></div>`).join("")+`</div>`;}
-
-function triage(){const t=tickets;return `<h2>AI triage</h2><p class="note">Select a ticket. Anything under 80% confidence, and every payment action, goes to a human.</p><div class="scroll"><table><tr><th>Ticket</th><th>Category</th><th>Severity</th><th>Route</th><th>Confidence</th><th>SLA left</th></tr>`+
-t.map((x,i)=>`<tr data-i="${i}" class="${i===S.tick?"sel":""}"><td>${x.id}<br>${esc(x.t)}</td><td>${x.c}</td><td>${sev(x.sev)}</td><td>${x.tier}<br><span class="note">${x.reg}</span></td><td>${x.conf}%<div class="bar"><i style="width:${x.conf}%"></i></div></td><td>${x.sla}h</td></tr>`).join("")+
-`</table></div><div class="card" style="margin-top:1rem"><h3>AI summary <span class="sim">Simulated</span></h3><p>${esc(t[S.tick].ai)}</p><p class="note">${t[S.tick].conf<80||t[S.tick].c==="Payments"?"Routed to a human reviewer.":"Eligible for automated handling."}</p></div>`;}
-
-function tech(){const x=tickets[S.tick];return `<h2>Investigation workbench</h2><div class="row"><label>Ticket <select id="tsel">${tickets.map((y,i)=>`<option value="${i}" ${i===S.tick?"selected":""}>${y.id} ${esc(y.t)}</option>`).join("")}</select></label></div>
-<div class="grid"><div class="card"><h3>Logs <span class="sim">Simulated</span></h3><pre>${logs[x.id].map(esc).join("\n")}</pre></div><div class="card"><h3>Read-only SQL <span class="sim">Simulated</span></h3><pre>${esc(sql[x.id])}</pre></div></div>
-<div class="card" style="margin-top:1rem"><h3>Method</h3><p>Reproduce, isolate the service, confirm the cause in data, propose a fix, then record it for the knowledge base.</p><p class="note">Proposed: ${esc(x.ai)}</p></div>`;}
-
-function gov(){return `<h2>Governed autonomy</h2><p class="note">Choose what happens, and see who is allowed to do it.</p><div class="scroll"><table><tr><th>Action</th><th>Autonomy level</th><th></th></tr>`+
-actions.map((a,i)=>`<tr><td>${a[0]}</td><td><span class="tag">${a[2]}</span></td><td><button class="btn alt" data-a="${i}">${a[1]===1?"Request":a[1]===2?"Approve and run":"Run"}</button></td></tr>`).join("")+
-`</table></div><div class="card" style="margin-top:1rem"><h3>Audit trail</h3>${S.audit.length?S.audit.map(l=>`<div class="note">${esc(l)}</div>`).join(""):'<p class="note">No actions yet. Run one above.</p>'}</div>`;}
-
-function kb(){const k=S.kb;return `<h2>Knowledge loop</h2><p class="note">A resolved case becomes an article, then self-service. Humans review before it goes live.</p><div class="card"><h3>Case T-1041 to KB article</h3>
-<p>1. Resolved case ${k.drafted?"✓":""}<br>2. AI draft ${k.reviewed?"✓":""}<br>3. Human review ${k.pub?"✓":""}<br>4. Published</p>
-<button class="btn" id="kbn">${!k.drafted?"Draft article":!k.reviewed?"Approve as reviewer":!k.pub?"Publish":"Reset"}</button></div>
-<div class="grid" style="margin-top:1rem"><div class="card"><h3>Deflection <span class="sim">Simulated</span></h3><b style="font-size:1.6rem">58%</b><div class="bar"><i style="width:58%"></i></div></div><div class="card"><h3>Confirmed resolution <span class="sim">Simulated</span></h3><b style="font-size:1.6rem">41%</b><div class="bar"><i style="width:41%"></i></div></div></div>
-<p class="note">A customer leaving the chat does not prove the problem was solved. I track both and manage to the second.</p>`;}
-
-function ops(){const reg=[["India",88],["EMEA",76],["Americas",64]];return `<h2>Operations command centre</h2><div class="grid">`+
-[["SLA attainment","94%"],["Open backlog","132"],["Escalation rate","9%"],["Repeat-case rate","11%"],["Quality score","91"]].map(([a,b])=>`<div class="card"><span class="note">${a}</span><b style="display:block;font-size:1.6rem">${b}</b><span class="sim">Simulated</span></div>`).join("")+
-`</div><div class="card" style="margin-top:1rem"><h3>Shift coverage by region</h3>${reg.map(r=>`<div class="row"><span>${r[0]}</span><span>${r[1]}%</span></div><div class="bar"><i style="width:${r[1]}%"></i></div>`).join("")}<p class="note">Americas is the gap to close first.</p></div>
-<button class="btn" id="rep" style="margin-top:1rem">Generate weekly report</button><pre id="repout" hidden></pre>`;}
-
-function roadmap(){return `<h2>Root cause to roadmap</h2><div class="scroll"><table><tr><th>Recurring issue</th><th>Cases / qtr</th><th>Ask</th><th>Status</th><th>Expected change</th></tr>`+
-issues.map(i=>`<tr><td>${i[0]}</td><td>${i[1]}</td><td>${i[2]}</td><td><span class="tag">${i[3]}</span></td><td>${i[4]}%</td></tr>`).join("")+`</table></div><p class="note">Ranked by volume and customer impact, so Product and R&D see the cases avoided, not just the complaints.</p>`;}
-
-function strategy(){return `<h2>30/60/90-day plan</h2><div class="grid">`+plan.map(p=>`<div class="card"><h3>${p[0]}</h3><ul>${p[1].map(i=>`<li>${i}</li>`).join("")}</ul></div>`).join("")+`</div>`;}
-
-function sim(){const s=S.sim||(S.sim={d:58,h:40,a:30,e:9});const cost=(100-s.d*.6-s.a*.3)*s.h/100*12;const sla=Math.min(99,Math.round(78+s.h*.1+s.a*.15+s.d*.12-s.e*.8));
-const csat=Math.min(98,Math.round(70+s.d*.1+s.a*.1+s.h*.1-s.e*.5));
-return `<h2>What-if simulator</h2><p class="note">Illustrative model, not a forecast.</p><div class="grid">`+
-[["d","AI deflection %",0,90],["h","Agents",10,80],["a","Automation coverage %",0,80],["e","Escalation rate %",2,25]].map(([k,l,a,b])=>`<div class="card"><label>${l}: <b id="v${k}">${s[k]}</b><input type="range" id="r${k}" min="${a}" max="${b}" value="${s[k]}"></label></div>`).join("")+
-`</div><div class="grid" style="margin-top:1rem"><div class="card"><span class="note">Monthly cost index</span><b id="oc" style="display:block;font-size:1.6rem">${cost.toFixed(0)}</b></div><div class="card"><span class="note">SLA attainment</span><b id="os" style="display:block;font-size:1.6rem">${sla}%</b></div><div class="card"><span class="note">CSAT</span><b id="oq" style="display:block;font-size:1.6rem">${csat}</b></div></div>`;}
-
-function bind(){const v=$("#view");
-v.querySelectorAll("[data-t]").forEach(b=>b.onclick=()=>go(b.dataset.t));
-v.querySelectorAll("tr[data-i]").forEach(r=>r.onclick=()=>{S.tick=+r.dataset.i;render();});
-const ts=$("#tsel");if(ts)ts.onchange=()=>{S.tick=+ts.value;render();};
-v.querySelectorAll("[data-a]").forEach(b=>b.onclick=()=>{const a=actions[+b.dataset.a];
-S.audit.unshift(`${new Date().toLocaleTimeString()} ${a[0]}: ${a[1]===1?"human decision required, request logged":a[1]===2?"approved by human, executed":"executed automatically, logged"}`);render();});
-const kn=$("#kbn");if(kn)kn.onclick=()=>{const k=S.kb;if(!k.drafted)k.drafted=true;else if(!k.reviewed)k.reviewed=true;else if(!k.pub)k.pub=true;else S.kb={drafted:false,reviewed:false,pub:false};render();};
-const rp=$("#rep");if(rp)rp.onclick=()=>{const o=$("#repout");o.hidden=false;o.textContent="Weekly support report (simulated)\nSLA 94% (+1pt). Backlog 132 (-9). Escalations 9%.\nTop driver: LATAM bank file errors, 212 cases.\nAsk to R&D: field validation at entry.\nRisk: Americas night-shift coverage at 64%.";};
-if(S.tab==="sim"){const s=S.sim;["d","h","a","e"].forEach(k=>{$("#r"+k).oninput=e=>{s[k]=+e.target.value;$("#v"+k).textContent=s[k];
-const cost=(100-s.d*.6-s.a*.3)*s.h/100*12;$("#oc").textContent=cost.toFixed(0);
-$("#os").textContent=Math.min(99,Math.round(78+s.h*.1+s.a*.15+s.d*.12-s.e*.8))+"%";
-$("#oq").textContent=Math.min(98,Math.round(70+s.d*.1+s.a*.1+s.h*.1-s.e*.5));};});}}
-const h=location.hash.slice(1);if(tabs.some(t=>t[0]===h))S.tab=h;
-addEventListener("hashchange",()=>{const h=location.hash.slice(1);if(tabs.some(t=>t[0]===h)&&h!==S.tab){S.tab=h;render();}});
-render();
+const $=s=>document.querySelector(s),esc=s=>String(s).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+const hm=m=>String(Math.floor(m/60)%24).padStart(2,"0")+":"+String(m%60).padStart(2,"0"),money=n=>"$"+n.toLocaleString("en-US");
+const ST=["To Do","In Triage","In Investigation","Awaiting Approval","Done","Escalated"],PR={Highest:["▲▲","#de350b"],High:["▲","#ff7452"],Medium:["═","#ffab00"],Low:["▼","#36b37e"]},AI="Resolve Loop AI";
+const SC=[
+{id:"br",t:"Brazil pay run rejected by partner bank: CNAB 240 CNPJ check-digit failure",co:"Lumio Retail Group",cn:"🇧🇷",reg:"Americas",comp:"Payments · Bank Files",tier:"Payment Services",pri:"Highest",aff:41,u:"employees",exp:186400,risk:"pay",conf:94,sla:240,base:212,
+logs:[["ERROR","payrun-svc","bank_file validation failed run=R-88124 layout=CNAB240 field=A07.cnpj reason=CHECK_DIGIT_INVALID rows=41"],["WARN","payrun-svc","retry 1/3 skipped, error_class=NON_RETRYABLE"],["INFO","notify-svc","paged payments-oncall (INC-70213)"]],
+sql:"SELECT entity_id, cnpj, status FROM bank_file_errors WHERE run_id='R-88124';\n-- 41 rows: CNPJ stored with 12 digits (leading zeros stripped on CSV import)",
+rc:"Leading zeros were stripped from CNPJ values during the customer's CSV import, producing invalid check digits. Matches 3 prior cases (PSUP-19877, PSUP-20102, PSUP-20344).",
+fix:"Re-pad 41 CNPJs to 14 digits, regenerate the CNAB 240 file and resubmit before the 15:30 BRT bank cut-off",kb:"Brazil: CNAB 240 rejection caused by stripped CNPJ leading zeros",plat:["PLAT-3318","Product: CNPJ validation at import","In build"]},
+{id:"ph",t:"FX payout held for 27 contractors: PHP corridor partner cut-off missed",co:"Orbit Studios Inc.",cn:"🇵🇭",reg:"APAC",comp:"Workforce Payments · FX",tier:"Payment Services",pri:"Highest",aff:27,u:"contractors",exp:94250,risk:"pay",conf:72,sla:180,base:133,
+logs:[["WARN","payout-svc","partner cut-off 06:00Z missed corridor=USD-PHP batch=B-55102"],["INFO","payout-svc","status=HELD awaiting_approval=true payouts=27 amount=94250.00 USD"],["INFO","fx-svc","rate lock honoured until 18:00Z"]],
+sql:"SELECT status, COUNT(*), SUM(amount_usd) FROM payouts WHERE batch_id='B-55102' GROUP BY status;\n-- HELD | 27 | 94,250.00",
+rc:"The batch was released 14 minutes after the partner's PHP cut-off. Funds are safe in the settlement account and no debit has occurred.",
+fix:"Re-route via the secondary partner rail and release in the 11:00Z window with the FX rate lock honoured",kb:"Philippines: handling a missed PHP corridor cut-off",plat:["PLAT-3355","Product: cut-off aware scheduling and warning","Investigating"]},
+{id:"ae",t:"UAE WPS SIF file rejected: employer EID mismatch on 88 employees",co:"Dune Hospitality LLC",cn:"🇦🇪",reg:"EMEA",comp:"Payments · Bank Files",tier:"Payment Services",pri:"Highest",aff:88,u:"employees",exp:212600,risk:"pay",conf:90,sla:120,base:54,
+logs:[["ERROR","payrun-svc","SIF validation failed field=employer_eid expected=784-4412 actual=784-4419 run=R-88190"],["WARN","payrun-svc","WPS deadline in 118m, wage-protection penalty risk"]],
+sql:"SELECT employer_eid, COUNT(*) FROM sif_headers WHERE run_id='R-88190' GROUP BY 1;\n-- 2 distinct EIDs on one file",
+rc:"An entity merge left a legacy employer ID on 88 employee payroll profiles.",
+fix:"Correct the EID via an approved data change, regenerate the SIF and resubmit before the WPS deadline",kb:"UAE: WPS SIF rejection after entity merge",plat:["PLAT-3377","Product: entity-merge data validation","Backlog"]},
+{id:"uk",t:"HMRC RTI FPS rejected for 12 employees: invalid NI number format",co:"Northgate Logistics Ltd",cn:"🇬🇧",reg:"EMEA",comp:"Compliance · Statutory Filings",tier:"Tier 2",pri:"High",aff:12,u:"employees",exp:2400,risk:"appr",conf:81,sla:360,base:148,
+logs:[["ERROR","filing-svc","RTI FPS rejected corr_id=7f3a91 code=SCHEMA_ERR field=NINO count=12"],["WARN","tax-svc","code S1257L not in cache, refresh job lag 38m"]],
+sql:"SELECT nino, sync_status FROM employee_tax WHERE run_id='R-88140' AND sync_status='STALE';\n-- 12 rows: lowercase NINO with trailing space from HRIS sync",
+rc:"The HRIS sync delivered NI numbers in lowercase with trailing whitespace, and the normaliser was skipped while the tax cache refresh job lagged 38 minutes.",
+fix:"Normalise 12 NI numbers, re-sync tax tables and resubmit the FPS ahead of the payment date",kb:"UK: FPS rejection from malformed NI numbers",plat:["PLAT-3342","R&D: refresh job priority and NINO normaliser","Planned"]},
+{id:"mx",t:"Mexico payroll CFDI 4.0 stamping failed: PAC timeout on 63 receipts",co:"Solana Foods SA de CV",cn:"🇲🇽",reg:"Americas",comp:"Compliance · e-Invoicing",tier:"Tier 2",pri:"High",aff:63,u:"receipts",exp:41800,risk:"appr",conf:89,sla:300,base:71,
+logs:[["ERROR","cfdi-svc","stamping failed pac=PAC-2 timeout=30000ms receipts=63 run=R-88177"],["INFO","cfdi-svc","failover target pac=PAC-1 healthy, idempotency keys preserved"]],
+sql:"SELECT status, COUNT(*) FROM cfdi_receipts WHERE run_id='R-88177' GROUP BY status;\n-- PENDING_STAMP | 63",
+rc:"The primary PAC was degraded and there is no automatic failover for payroll receipts.",
+fix:"Re-stamp 63 receipts through PAC-1 using the original idempotency keys (no duplicates)",kb:"Mexico: CFDI stamping timeout and PAC failover",plat:["PLAT-3370","R&D: automatic PAC failover","Planned"]},
+{id:"wd",t:"Workday worker sync failing: webhook 503 and retry queue at 1,840 events",co:"Helix Biotech",cn:"🇺🇸",reg:"Americas",comp:"Integrations · API",tier:"Tier 2",pri:"High",aff:1840,u:"events",exp:0,risk:"appr",conf:67,sla:480,base:96,
+logs:[["ERROR","hook-svc","503 from consumer endpoint_id=EP-2291 url=https://hris.helixbio.example/hooks"],["WARN","queue-svc","retry depth=1840 threshold=500 backoff=64s"]],
+sql:"SELECT status, COUNT(*) FROM webhook_events WHERE type='worker.updated' GROUP BY status;\n-- PENDING_RETRY | 1840",
+rc:"The customer endpoint is rate-limiting bursts after a bulk hire upload, and our consumers retry without jitter, amplifying the backlog.",
+fix:"Replay the queue at 20 events/s with jitter once the customer raises their rate limit",kb:"Integrations: webhook backlog after bulk hire upload",plat:["PLAT-3361","R&D: autoscaling consumers and jittered backoff","Investigating"]},
+{id:"kb",t:"How do I add a new cost centre?",co:"Fernwood Analytics",cn:"🇮🇳",reg:"APAC",comp:"Customer Support · How-to",tier:"Tier 1",pri:"Low",aff:1,u:"user",exp:0,risk:"auto",conf:98,sla:1440,base:74,
+logs:[["INFO","kb-svc","match KB-212 score=0.97"],["INFO","support-bot","reply sent, awaiting customer confirmation"]],sql:"-- No query needed",
+rc:"A standard how-to covered by KB-212.",fix:"Send KB-212 with a guided walkthrough and auto-close after 48h without reply",kb:"Guided cost centre setup walkthrough",plat:["PLAT-3290","Product: guided cost centre setup","Backlog"]}];
+const ACT=[["Tag and route a Tier 1 how-to","Acts alone","GOV-03"],["Draft a customer reply","Suggests","GOV-04"],["Re-sync tax tables or resubmit a statutory filing","Acts with approval","GOV-02"],["Replay a webhook queue or re-stamp e-invoices","Acts with approval","GOV-02"],["Release, retry or re-route a payment","Human only","GOV-01"],["Change employee pay or entity data","Human only","GOV-01"]];
+const PLAN=[["Days 1-30: Learn",["Baseline SLA, backlog, reopen and confirmed resolution by region and tier","Shadow escalations with Payments, Compliance and R&D","Map skills of every Tier 1, Tier 2 and Payment Services agent","Audit the top 10 country-specific failure modes"]],["Days 31-60: Stabilise",["Close follow-the-sun gaps across APAC, EMEA and Americas","Weekly root-cause review with R&D and Product","Ratify the AI approval matrix (GOV-01 to GOV-04)","One case documentation standard across all tiers"]],["Days 61-90: Scale",["Roll out AI triage with human-in-the-loop on every payment action","Convert the top 20 resolved cases into KB and self-service","Publish roadmap asks ranked by cases avoided","Launch the domain-expert career path"]]];
+const TABS=[["cmd","Command Center"],["board","Board"],["tix","Ticket"],["gov","Governance"],["intel","Intelligence"],["plan","Plan & What-if"]];
+let S,timer;
+function init(){S={tab:S?S.tab:"cmd",on:true,hf:true,clk:540,n:20430,i:0,T:[],audit:[],feed:[],kb:[],cnt:{},sel:null,done:0,auto:0,hum:0,esc:0,mt:0,br:0,prot:0,sim:{d:58,h:40,a:30,e:9}};spawn();spawn("ph");for(let k=0;k<5;k++)step(1);}
+function cm(t,w,x,y){t.c.push({w,x,m:S.clk,y})}
+function feed(t,x){S.feed.unshift({m:S.clk,k:t.k,x,f:t.s.cn});S.feed.length=Math.min(S.feed.length,40)}
+function aud(w,a,t){S.audit.unshift({m:S.clk,w,a,k:t.k})}
+function spawn(id){const s=id?SC.find(x=>x.id===id):SC[S.i++%SC.length];const t={k:"PSUP-"+(++S.n),s,st:0,d:0,age:0,c:[],ct:S.clk};S.T.unshift(t);feed(t,"New ticket: "+s.t);return t}
+function fin(t,msg,mode){t.st=4;cm(t,AI,msg,"ai");S.done++;if(mode==="auto")S.auto++;S.mt+=t.age;if(t.age>t.s.sla)S.br++;S.prot+=t.s.exp;S.cnt[t.s.id]=(S.cnt[t.s.id]||0)+1;S.kb.unshift({t:t.s.kb,k:t.k,p:false});feed(t,"✓ Resolved"+(mode==="auto"?" automatically":" after approval"));if(mode==="auto")aud(AI,"Auto-resolved (GOV-03)",t)}
+function adv(t){const s=t.s;t.d=0;
+if(t.st===0){t.st=1;cm(t,AI,`Triaged. Category: ${s.comp}. Priority: ${s.pri}. Routed to ${s.tier}. Confidence ${s.conf}%.\nImpact: ${s.aff.toLocaleString()} ${s.u}${s.exp?`, exposure ${money(s.exp)}`:""}. Region: ${s.reg}.`,"ai");feed(t,`AI triage → ${s.tier} (${s.conf}%)`)}
+else if(t.st===1){t.st=2;cm(t,AI,`Investigation complete. Logs and a read-only query are attached.\nRoot cause: ${s.rc}`,"ai");feed(t,"Root cause identified")}
+else if(s.risk==="auto")fin(t,"Resolved under GOV-03 (low risk, confidence 95% or higher). Customer reply sent, KB draft linked.","auto");
+else{t.st=3;cm(t,AI,`Proposed fix: ${s.fix}.\nPolicy ${s.risk==="pay"?"GOV-01: payment and pay-data actions are human only":"GOV-02: acts with human approval"}${s.conf<80?` (confidence ${s.conf}% is below the 80% threshold)`:""}. Awaiting ${s.risk==="pay"?"Payment Services Lead":"Tier 2 Lead"}.`,"ai");feed(t,"⚠ Awaiting human approval");aud(AI,"Requested approval",t)}}
+function decide(k,ok,w){const t=S.T.find(x=>x.k===k);if(!t||t.st!==3)return;if(ok){cm(t,w,"Approved. Proceed with the proposed fix.","h");S.hum++;aud(w,"Approved and ran",t);fin(t,`Executed: ${t.s.fix}. Result verified healthy. Customer update sent. KB draft created.`,"hum")}else{t.st=5;S.esc++;cm(t,w,"Rejected. Escalating to Tier 3 for manual handling.","h");feed(t,"✗ Rejected, escalated");aud(w,"Rejected",t)}}
+function step(q){S.clk+=10;if(S.T.filter(t=>t.st<4).length<3||Math.random()<.4)spawn();
+S.T.forEach(t=>{if(t.st>=4)return;t.age+=10;t.d++;if(t.st<3){if(t.d>=2)adv(t)}else if(S.hf&&t.d>=4)decide(t.k,true,"Simulated approver · "+(t.s.risk==="pay"?"Payment Services Lead":"Tier 2 Lead"))});
+S.T=S.T.filter((t,i)=>i<30||t.st<4);if(!q)ui()}
+const pend=()=>S.T.filter(t=>t.st===3),open=()=>S.T.filter(t=>t.st<4);
+const cur=()=>S.T.find(t=>t.k===S.sel)||open()[0]||S.T[0];
+const slaL=t=>t.s.sla-t.age,fmtL=m=>m<0?"BREACHED":(m>=120?Math.floor(m/60)+"h "+m%60+"m":m+"m");
+const sla=()=>S.done?Math.round((S.done-S.br)/S.done*100):100,mttr=()=>S.done?Math.round(S.mt/S.done):0;
+function cmd(){const reg=["Americas","EMEA","APAC"].map(r=>[r,open().filter(t=>t.s.reg===r).length]);
+return `<div class="grid">`+[["Resolved",S.done],["Auto-resolved",S.auto],["Human-approved",S.hum],["Awaiting approval",pend().length],["Avg time to resolve",mttr()+"m"],["SLA attainment",sla()+"%"]].map(([a,b])=>`<div class="card k"><b>${b}</b><span>${a}</span></div>`).join("")+`<div class="card k hot"><b>${money(S.prot)}</b><span>Payroll exposure protected</span></div></div>
+<div class="grid g2" style="margin-top:.9rem"><div class="card"><h3>Live activity</h3><div class="feed">${S.feed.slice(0,11).map(f=>`<div>${hm(f.m)} ${f.f} <code data-a="open:${f.k}">${f.k}</code> ${esc(f.x)}</div>`).join("")}</div></div>
+<div class="card"><h3>Open load by region</h3>${reg.map(r=>`<div class="row"><span>${r[0]}</span><span>${r[1]} open</span></div><div class="bar"><i style="width:${Math.min(100,r[1]*25)}%"></i></div>`).join("")}<p class="note" style="margin-top:1rem">Operating rule: AI investigates everything, acts alone only on low-risk how-tos, and every payment action waits for a named human approver.</p><p class="note">Toggle <b>Hands-free demo</b> off to become the approver yourself.</p></div></div>`}
+function board(){const cols=[[0],[1],[2],[3],[4,5]];return `<div class="board">`+cols.map(c=>{const ts=S.T.filter(t=>c.includes(t.st)).slice(0,c[0]===4?6:20);return `<div class="col"><h3>${ST[c[0]]} · ${ts.length}</h3>`+ts.map(t=>`<div class="tc ${t.st===3?"p":""}" data-a="open:${t.k}"><b>${t.k}</b> ${t.s.cn}<br>${esc(t.s.t.slice(0,70))}…<br><small style="color:${PR[t.s.pri][1]}">${PR[t.s.pri][0]} ${t.s.pri}</small> <small>· SLA ${t.st<4?fmtL(slaL(t)):"met"}</small></div>`).join("")+`</div>`}).join("")+`</div>`}
+function tix(){const t=cur();if(!t)return"";const s=t.s,p=PR[s.pri];
+return `<div class="chips">${open().slice(0,6).map(x=>`<button class="b ${x.k===t.k?"on":""}" data-a="open:${x.k}">${x.s.cn} ${x.k}</button>`).join("")}</div>
+<div class="jira"><div class="jb">Projects / Global Payroll Support / <b>${t.k}</b></div><h2>${esc(s.t)}</h2>
+<div style="display:flex;gap:.5rem;align-items:center;flex-wrap:wrap"><span class="lz s${t.st}">${ST[t.st]}</span>${t.st===3?`<button class="b ok pulse" data-a="ok:${t.k}">✓ Approve and run</button><button class="b no" data-a="no:${t.k}">Reject</button>`:""}</div>
+<div class="jg"><div><h3>Description</h3><p>${esc(s.co)} (${s.cn} ${s.reg}) reported: <i>${esc(s.t)}</i><br>Impact: ${s.aff.toLocaleString()} ${s.u}${s.exp?`. Estimated exposure ${money(s.exp)}.`:"."} Raised via Customer Portal, environment prod.</p>
+${t.st>=2?`<h3>Evidence</h3><pre>${s.logs.map(l=>`${hm(t.ct||540)} ${l[1]} ${l[0]} ${esc(l[2])}`).join("\n")}</pre><pre>${esc(s.sql)}</pre>`:""}
+${t.st>=3?`<h3>Customer reply ${t.st===4?"(sent)":"(draft, queued)"}</h3><pre>Hello ${esc(s.co)} team,\n\nWe have identified the cause affecting ${s.aff.toLocaleString()} ${s.u}: ${esc(s.rc)}\n\nNext step: ${esc(s.fix)}.\nNo action is needed from you unless we contact you.\n\nKind regards,\nGlobal Payroll Support</pre>`:""}
+<h3>Activity</h3>${t.c.map(c=>`<div class="cm"><div class="av ${c.y}">${c.y==="ai"?"AI":c.y==="h"?"HS":"CS"}</div><div><b>${esc(c.w)}</b> <small>${hm(c.m)} today</small><p>${esc(c.x)}</p></div></div>`).join("")||'<p class="note">No activity yet.</p>'}</div>
+<div><h3>Details</h3><div class="jp"><div><span>Status</span><b>${ST[t.st]}</b></div><div><span>Priority</span><b style="color:${p[1]}">${p[0]} ${s.pri}</b></div><div><span>Assignee</span><b>${t.st<1?"Unassigned":t.st===3?(s.risk==="pay"?"Payment Services Lead":"Tier 2 Lead"):AI}</b></div><div><span>Reporter</span><b>${esc(s.co)}</b></div><div><span>Component</span><b>${esc(s.comp)}</b></div><div><span>Region</span><b>${s.cn} ${s.reg}</b></div><div><span>Labels</span><b>${s.risk==="pay"?"payments, human-only":s.risk==="appr"?"needs-approval":"auto-eligible"}</b></div><div><span>SLA</span><b style="color:${t.st<4&&slaL(t)<0?"#de350b":"inherit"}">${t.st<4?fmtL(slaL(t)):"Met"}</b></div><div><span>AI confidence</span><b>${s.conf}%</b></div><div><span>Linked</span><b>${s.plat[0]}</b></div></div>
+<h3>Linked issue</h3><p><b style="color:#0052cc">${s.plat[0]}</b> ${esc(s.plat[1])}<br><span class="lz s1">${s.plat[2]}</span></p></div></div></div>`}
+function gov(){return `<div class="grid g2"><div class="card"><h3>Approval matrix</h3><div class="scroll"><table><tr><th>Action</th><th>Autonomy</th><th>Policy</th></tr>${ACT.map(a=>`<tr><td>${a[0]}</td><td><span class="tag">${a[1]}</span></td><td>${a[2]}</td></tr>`).join("")}</table></div><p class="note">Anything below 80% confidence is routed to a human regardless of category.</p></div>
+<div class="card"><h3>Approval queue</h3>${pend().map(t=>`<div class="row"><span>${t.s.cn} <b data-a="open:${t.k}" style="cursor:pointer">${t.k}</b><br><span class="note">${esc(t.s.fix)}</span></span><span style="white-space:nowrap"><button class="b ok" data-a="ok:${t.k}">Approve</button> <button class="b no" data-a="no:${t.k}">Reject</button></span></div>`).join("")||'<p class="note">Nothing waiting. Inject an incident to see an approval request.</p>'}</div></div>
+<div class="card" style="margin-top:.9rem"><h3>Audit trail</h3><div class="feed">${S.audit.slice(0,14).map(a=>`<div>${hm(a.m)} <b>${esc(a.w)}</b> · ${a.a} · <code data-a="open:${a.k}">${a.k}</code></div>`).join("")||'<p class="note">No events yet.</p>'}</div></div>`}
+function intel(){return `<div class="card"><h3>Root cause to roadmap</h3><div class="scroll"><table><tr><th>Recurring issue</th><th>Cases this qtr</th><th>Linked JIRA</th><th>Status</th></tr>${SC.slice().sort((a,b)=>(b.base+(S.cnt[b.id]||0))-(a.base+(S.cnt[a.id]||0))).map(s=>`<tr><td>${s.cn} ${esc(s.kb)}</td><td><b>${s.base+(S.cnt[s.id]||0)}</b></td><td>${s.plat[0]} ${esc(s.plat[1])}</td><td><span class="tag">${s.plat[2]}</span></td></tr>`).join("")}</table></div><p class="note">Counts grow live as the desk resolves tickets, so R&D sees cases avoided, not just complaints.</p></div>
+<div class="grid g2" style="margin-top:.9rem"><div class="card"><h3>Knowledge loop</h3>${S.kb.slice(0,6).map((k,i)=>`<div class="row"><span>${esc(k.t)}<br><span class="note">from ${k.k}</span></span>${k.p?'<span class="tag">Published</span>':`<button class="b" data-a="pub:${i}">Review and publish</button>`}</div>`).join("")||'<p class="note">Articles appear as tickets resolve.</p>'}<p class="note">Every resolved case becomes an article. A human reviews before it goes live.</p></div>
+<div class="card"><h3>Executive brief</h3><button class="b on" data-a="brief">Generate weekly brief</button><pre class="dk" id="brief" hidden></pre></div></div>`}
+function plan(){const s=S.sim;return `<div class="grid g2">${PLAN.map(p=>`<div class="card"><h3>${p[0]}</h3><ul>${p[1].map(i=>`<li>${i}</li>`).join("")}</ul></div>`).join("")}</div><h2 style="margin-top:1.2rem">What-if simulator</h2><p class="note">Illustrative model, not a forecast.</p><div class="grid">${[["d","AI deflection %",0,90],["h","Agents",10,80],["a","Automation coverage %",0,80],["e","Escalation rate %",2,25]].map(([k,l,a,b])=>`<div class="card"><label>${l}: <b id="v${k}">${s[k]}</b><input type="range" id="r${k}" min="${a}" max="${b}" value="${s[k]}"></label></div>`).join("")}</div><div class="grid" style="margin-top:.9rem"><div class="card k"><b id="oc"></b><span>Monthly cost index</span></div><div class="card k"><b id="os"></b><span>SLA attainment</span></div><div class="card k"><b id="oq"></b><span>CSAT</span></div></div>`}
+function calc(){const s=S.sim;$("#oc").textContent=((100-s.d*.6-s.a*.3)*s.h/100*12).toFixed(0);$("#os").textContent=Math.min(99,Math.round(78+s.h*.1+s.a*.15+s.d*.12-s.e*.8))+"%";$("#oq").textContent=Math.min(98,Math.round(70+s.d*.1+s.a*.1+s.h*.1-s.e*.5))}
+const V={cmd,board,tix,gov,intel,plan};
+function render(){$("#nav").innerHTML=TABS.map(([k,l])=>`<button class="${S.tab===k?"cur":""}" data-a="tab:${k}">${l}</button>`).join("");$("#view").innerHTML=V[S.tab]();if(S.tab==="plan")calc();hud()}
+function hud(){$("#clk").textContent="Sim clock "+hm(S.clk)+" UTC";$("#pend").textContent=pend().length;$("#live").classList.toggle("off",!S.on)}
+let dn=false;addEventListener("mousedown",()=>dn=true);addEventListener("mouseup",()=>setTimeout(()=>dn=false,0));
+function ui(){if(S.tab==="plan"||dn){hud();return}const b=$("#brief");if(b&&!b.hidden){hud();return}render()}
+function loop(){clearInterval(timer);if(S.on)timer=setInterval(step,+$("#spd").value)}
+document.addEventListener("click",e=>{const el=e.target.closest("[data-a]");if(!el)return;const[a,v]=el.dataset.a.split(":");
+if(a==="tab"){S.tab=v;location.hash=v}else if(a==="open"){S.sel=v;S.tab="tix"}
+else if(a==="ok"||a==="no")decide(v,a==="ok","You · Head of Support");
+else if(a==="tog"){S.on=!S.on;el.textContent=S.on?"⏸ Autopilot ON":"▶ Autopilot PAUSED";el.classList.toggle("on",S.on);loop()}
+else if(a==="hf"){S.hf=!S.hf;el.textContent="Hands-free demo: "+(S.hf?"ON":"OFF");el.classList.toggle("on",S.hf)}
+else if(a==="step")step(1);
+else if(a==="inj"){const t=spawn($("#injs").value);S.sel=t.k}
+else if(a==="rst"){init();loop()}
+else if(a==="pub"){S.kb[+v].p=true;aud("You · Head of Support","Published KB article",{k:S.kb[+v].k})}
+else if(a==="brief"){const top=SC.slice().sort((a,b)=>(b.base+(S.cnt[b.id]||0))-(a.base+(S.cnt[a.id]||0)))[0],o=$("#brief");o.hidden=false;o.textContent=`WEEKLY SUPPORT BRIEF · sim ${hm(S.clk)} UTC\nResolved ${S.done} (${S.auto} automated, ${S.hum} human-approved, ${S.esc} escalated)\nSLA attainment ${sla()}% · avg time to resolve ${mttr()} min\nPayroll exposure protected: ${money(S.prot)}\nTop driver: ${top.kb} (${top.base+(S.cnt[top.id]||0)} cases)\nAsk to R&D and Product: ${top.plat[1]} (${top.plat[0]}, ${top.plat[2]})\nRisk to watch: APAC night-shift coverage and PHP/AED cut-off windows.`;return}
+render()});
+document.addEventListener("input",e=>{const k=e.target.id&&e.target.id[0]==="r"&&e.target.id.length===2?e.target.id[1]:null;if(k){S.sim[k]=+e.target.value;$("#v"+k).textContent=S.sim[k];calc()}});
+$("#spd").onchange=loop;$("#injs").innerHTML=SC.map(s=>`<option value="${s.id}">${s.cn} ${esc(s.comp.split(" · ")[1])}: ${esc(s.t.slice(0,26))}…</option>`).join("");
+const h0=location.hash.slice(1);init();if(TABS.some(t=>t[0]===h0))S.tab=h0;
+addEventListener("hashchange",()=>{const h=location.hash.slice(1);if(TABS.some(t=>t[0]===h)&&h!==S.tab){S.tab=h;render()}});
+render();loop();
 </script>
 </body>
 </html>
