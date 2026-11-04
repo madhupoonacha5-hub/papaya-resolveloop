@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%237b4dff'/%3E%3Ctext x='16' y='23' font-size='20' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'%3ER%3C/text%3E%3C/svg%3E" />
 <title>Resolve Loop · Autonomous Global Payroll Support Desk</title>
 <meta name="description" content="A live, self-running simulation of a global payroll support desk: AI triage, investigation, governed human approval, JIRA-style tickets and knowledge capture. Built for the Papaya Global Head of Support role. Synthetic data." />
 <style>
@@ -44,7 +45,7 @@ table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:.5rem .6
 .col{background:#120c35;border:1px solid var(--line);border-radius:10px;padding:.6rem;min-height:200px}.col h3{font-size:.75rem;text-transform:uppercase;color:var(--mute);letter-spacing:.05em}
 .tc{background:var(--panel2);border:1px solid var(--line);border-left:3px solid var(--vio);border-radius:8px;padding:.55rem .6rem;margin:.45rem 0;font-size:.82rem;cursor:pointer}.tc:hover{border-color:var(--cor)}.tc.p{border-left-color:var(--cor);box-shadow:0 0 0 1px #ff6a3d55}
 .tc small{color:var(--mute)}
-/* JIRA-style light surface */
+.cc{display:inline-block;font-size:.68rem;font-weight:700;padding:0 .35rem;border-radius:4px;background:var(--line);color:var(--ink);vertical-align:middle}
 .jira{background:#fff;color:#172b4d;border-radius:12px;padding:1rem 1.3rem;box-shadow:0 12px 40px #0006;font-size:.9rem}
 .jira h2{color:#172b4d;font-size:1.35rem;margin:.2rem 0 .6rem}.jira h3{color:#5e6c84;font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;margin:1rem 0 .4rem}
 .jb{color:#5e6c84;font-size:.8rem}.jb b{color:#0052cc}
@@ -74,7 +75,7 @@ button:focus-visible,select:focus-visible{outline:2px solid var(--amb);outline-o
 <div class="ctl"><div class="wrap">
 <button class="b on" id="ap" data-a="tog">⏸ Autopilot ON</button>
 <button class="b" data-a="step">Step ▸</button>
-<select id="spd" aria-label="Speed"><option value="1800">Speed 1x</option><option value="900">Speed 2x</option><option value="3600">Speed 0.5x</option></select>
+<select id="spd" aria-label="Speed"><option value="2400">Speed 0.5x</option><option value="1200" selected>Speed 1x</option><option value="600">Speed 2x</option><option value="300">Speed 4x</option></select>
 <button class="b on" id="hf" data-a="hf">Hands-free demo: ON</button>
 <select id="injs" aria-label="Scenario"></select><button class="b" data-a="inj">⚡ Inject incident</button>
 <button class="b" data-a="rst">Reset</button>
@@ -84,48 +85,49 @@ button:focus-visible,select:focus-visible{outline:2px solid var(--amb);outline-o
 <footer>Synthetic simulation built as a portfolio piece. All customers, tickets, logs and figures are fictional. Not affiliated with or endorsed by Papaya Global; colours are inspired by its brand.</footer>
 
 <script>
-const $=s=>document.querySelector(s),esc=s=>String(s).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+const $=s=>document.querySelector(s),esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const hm=m=>String(Math.floor(m/60)%24).padStart(2,"0")+":"+String(m%60).padStart(2,"0"),money=n=>"$"+n.toLocaleString("en-US");
+const cc=c=>`<span class="cc">${c}</span>`;
 const ST=["To Do","In Triage","In Investigation","Awaiting Approval","Done","Escalated"],PR={Highest:["▲▲","#de350b"],High:["▲","#ff7452"],Medium:["═","#ffab00"],Low:["▼","#36b37e"]},AI="Resolve Loop AI";
 const SC=[
-{id:"br",t:"Brazil pay run rejected by partner bank: CNAB 240 CNPJ check-digit failure",co:"Lumio Retail Group",cn:"🇧🇷",reg:"Americas",comp:"Payments · Bank Files",tier:"Payment Services",pri:"Highest",aff:41,u:"employees",exp:186400,risk:"pay",conf:94,sla:240,base:212,
+{id:"br",t:"Brazil pay run rejected by partner bank: CNAB 240 CNPJ check-digit failure",co:"Lumio Retail Group",cn:"BR",reg:"Americas",comp:"Payments · Bank Files",tier:"Payment Services",pri:"Highest",aff:41,u:"employees",exp:186400,risk:"pay",conf:94,sla:240,base:212,
 logs:[["ERROR","payrun-svc","bank_file validation failed run=R-88124 layout=CNAB240 field=A07.cnpj reason=CHECK_DIGIT_INVALID rows=41"],["WARN","payrun-svc","retry 1/3 skipped, error_class=NON_RETRYABLE"],["INFO","notify-svc","paged payments-oncall (INC-70213)"]],
 sql:"SELECT entity_id, cnpj, status FROM bank_file_errors WHERE run_id='R-88124';\n-- 41 rows: CNPJ stored with 12 digits (leading zeros stripped on CSV import)",
 rc:"Leading zeros were stripped from CNPJ values during the customer's CSV import, producing invalid check digits. Matches 3 prior cases (PSUP-19877, PSUP-20102, PSUP-20344).",
 fix:"Re-pad 41 CNPJs to 14 digits, regenerate the CNAB 240 file and resubmit before the 15:30 BRT bank cut-off",kb:"Brazil: CNAB 240 rejection caused by stripped CNPJ leading zeros",plat:["PLAT-3318","Product: CNPJ validation at import","In build"]},
-{id:"ph",t:"FX payout held for 27 contractors: PHP corridor partner cut-off missed",co:"Orbit Studios Inc.",cn:"🇵🇭",reg:"APAC",comp:"Workforce Payments · FX",tier:"Payment Services",pri:"Highest",aff:27,u:"contractors",exp:94250,risk:"pay",conf:72,sla:180,base:133,
+{id:"ph",t:"FX payout held for 27 contractors: PHP corridor partner cut-off missed",co:"Orbit Studios Inc.",cn:"PH",reg:"APAC",comp:"Workforce Payments · FX",tier:"Payment Services",pri:"Highest",aff:27,u:"contractors",exp:94250,risk:"pay",conf:72,sla:180,base:133,
 logs:[["WARN","payout-svc","partner cut-off 06:00Z missed corridor=USD-PHP batch=B-55102"],["INFO","payout-svc","status=HELD awaiting_approval=true payouts=27 amount=94250.00 USD"],["INFO","fx-svc","rate lock honoured until 18:00Z"]],
 sql:"SELECT status, COUNT(*), SUM(amount_usd) FROM payouts WHERE batch_id='B-55102' GROUP BY status;\n-- HELD | 27 | 94,250.00",
 rc:"The batch was released 14 minutes after the partner's PHP cut-off. Funds are safe in the settlement account and no debit has occurred.",
 fix:"Re-route via the secondary partner rail and release in the 11:00Z window with the FX rate lock honoured",kb:"Philippines: handling a missed PHP corridor cut-off",plat:["PLAT-3355","Product: cut-off aware scheduling and warning","Investigating"]},
-{id:"ae",t:"UAE WPS SIF file rejected: employer EID mismatch on 88 employees",co:"Dune Hospitality LLC",cn:"🇦🇪",reg:"EMEA",comp:"Payments · Bank Files",tier:"Payment Services",pri:"Highest",aff:88,u:"employees",exp:212600,risk:"pay",conf:90,sla:120,base:54,
+{id:"ae",t:"UAE WPS SIF file rejected: employer EID mismatch on 88 employees",co:"Dune Hospitality LLC",cn:"AE",reg:"EMEA",comp:"Payments · Bank Files",tier:"Payment Services",pri:"Highest",aff:88,u:"employees",exp:212600,risk:"pay",conf:90,sla:120,base:54,
 logs:[["ERROR","payrun-svc","SIF validation failed field=employer_eid expected=784-4412 actual=784-4419 run=R-88190"],["WARN","payrun-svc","WPS deadline in 118m, wage-protection penalty risk"]],
 sql:"SELECT employer_eid, COUNT(*) FROM sif_headers WHERE run_id='R-88190' GROUP BY 1;\n-- 2 distinct EIDs on one file",
 rc:"An entity merge left a legacy employer ID on 88 employee payroll profiles.",
 fix:"Correct the EID via an approved data change, regenerate the SIF and resubmit before the WPS deadline",kb:"UAE: WPS SIF rejection after entity merge",plat:["PLAT-3377","Product: entity-merge data validation","Backlog"]},
-{id:"uk",t:"HMRC RTI FPS rejected for 12 employees: invalid NI number format",co:"Northgate Logistics Ltd",cn:"🇬🇧",reg:"EMEA",comp:"Compliance · Statutory Filings",tier:"Tier 2",pri:"High",aff:12,u:"employees",exp:2400,risk:"appr",conf:81,sla:360,base:148,
+{id:"uk",t:"HMRC RTI FPS rejected for 12 employees: invalid NI number format",co:"Northgate Logistics Ltd",cn:"GB",reg:"EMEA",comp:"Compliance · Statutory Filings",tier:"Tier 2",pri:"High",aff:12,u:"employees",exp:2400,risk:"appr",conf:81,sla:360,base:148,
 logs:[["ERROR","filing-svc","RTI FPS rejected corr_id=7f3a91 code=SCHEMA_ERR field=NINO count=12"],["WARN","tax-svc","code S1257L not in cache, refresh job lag 38m"]],
 sql:"SELECT nino, sync_status FROM employee_tax WHERE run_id='R-88140' AND sync_status='STALE';\n-- 12 rows: lowercase NINO with trailing space from HRIS sync",
 rc:"The HRIS sync delivered NI numbers in lowercase with trailing whitespace, and the normaliser was skipped while the tax cache refresh job lagged 38 minutes.",
 fix:"Normalise 12 NI numbers, re-sync tax tables and resubmit the FPS ahead of the payment date",kb:"UK: FPS rejection from malformed NI numbers",plat:["PLAT-3342","R&D: refresh job priority and NINO normaliser","Planned"]},
-{id:"mx",t:"Mexico payroll CFDI 4.0 stamping failed: PAC timeout on 63 receipts",co:"Solana Foods SA de CV",cn:"🇲🇽",reg:"Americas",comp:"Compliance · e-Invoicing",tier:"Tier 2",pri:"High",aff:63,u:"receipts",exp:41800,risk:"appr",conf:89,sla:300,base:71,
+{id:"mx",t:"Mexico payroll CFDI 4.0 stamping failed: PAC timeout on 63 receipts",co:"Solana Foods SA de CV",cn:"MX",reg:"Americas",comp:"Compliance · e-Invoicing",tier:"Tier 2",pri:"High",aff:63,u:"receipts",exp:41800,risk:"appr",conf:89,sla:300,base:71,
 logs:[["ERROR","cfdi-svc","stamping failed pac=PAC-2 timeout=30000ms receipts=63 run=R-88177"],["INFO","cfdi-svc","failover target pac=PAC-1 healthy, idempotency keys preserved"]],
 sql:"SELECT status, COUNT(*) FROM cfdi_receipts WHERE run_id='R-88177' GROUP BY status;\n-- PENDING_STAMP | 63",
 rc:"The primary PAC was degraded and there is no automatic failover for payroll receipts.",
 fix:"Re-stamp 63 receipts through PAC-1 using the original idempotency keys (no duplicates)",kb:"Mexico: CFDI stamping timeout and PAC failover",plat:["PLAT-3370","R&D: automatic PAC failover","Planned"]},
-{id:"wd",t:"Workday worker sync failing: webhook 503 and retry queue at 1,840 events",co:"Helix Biotech",cn:"🇺🇸",reg:"Americas",comp:"Integrations · API",tier:"Tier 2",pri:"High",aff:1840,u:"events",exp:0,risk:"appr",conf:67,sla:480,base:96,
+{id:"wd",t:"Workday worker sync failing: webhook 503 and retry queue at 1,840 events",co:"Helix Biotech",cn:"US",reg:"Americas",comp:"Integrations · API",tier:"Tier 2",pri:"High",aff:1840,u:"events",exp:0,risk:"appr",conf:67,sla:480,base:96,
 logs:[["ERROR","hook-svc","503 from consumer endpoint_id=EP-2291 url=https://hris.helixbio.example/hooks"],["WARN","queue-svc","retry depth=1840 threshold=500 backoff=64s"]],
 sql:"SELECT status, COUNT(*) FROM webhook_events WHERE type='worker.updated' GROUP BY status;\n-- PENDING_RETRY | 1840",
 rc:"The customer endpoint is rate-limiting bursts after a bulk hire upload, and our consumers retry without jitter, amplifying the backlog.",
 fix:"Replay the queue at 20 events/s with jitter once the customer raises their rate limit",kb:"Integrations: webhook backlog after bulk hire upload",plat:["PLAT-3361","R&D: autoscaling consumers and jittered backoff","Investigating"]},
-{id:"kb",t:"How do I add a new cost centre?",co:"Fernwood Analytics",cn:"🇮🇳",reg:"APAC",comp:"Customer Support · How-to",tier:"Tier 1",pri:"Low",aff:1,u:"user",exp:0,risk:"auto",conf:98,sla:1440,base:74,
+{id:"kb",t:"How do I add a new cost centre?",co:"Fernwood Analytics",cn:"IN",reg:"APAC",comp:"Customer Support · How-to",tier:"Tier 1",pri:"Low",aff:1,u:"user",exp:0,risk:"auto",conf:98,sla:1440,base:74,
 logs:[["INFO","kb-svc","match KB-212 score=0.97"],["INFO","support-bot","reply sent, awaiting customer confirmation"]],sql:"-- No query needed",
 rc:"A standard how-to covered by KB-212.",fix:"Send KB-212 with a guided walkthrough and auto-close after 48h without reply",kb:"Guided cost centre setup walkthrough",plat:["PLAT-3290","Product: guided cost centre setup","Backlog"]}];
 const ACT=[["Tag and route a Tier 1 how-to","Acts alone","GOV-03"],["Draft a customer reply","Suggests","GOV-04"],["Re-sync tax tables or resubmit a statutory filing","Acts with approval","GOV-02"],["Replay a webhook queue or re-stamp e-invoices","Acts with approval","GOV-02"],["Release, retry or re-route a payment","Human only","GOV-01"],["Change employee pay or entity data","Human only","GOV-01"]];
 const PLAN=[["Days 1-30: Learn",["Baseline SLA, backlog, reopen and confirmed resolution by region and tier","Shadow escalations with Payments, Compliance and R&D","Map skills of every Tier 1, Tier 2 and Payment Services agent","Audit the top 10 country-specific failure modes"]],["Days 31-60: Stabilise",["Close follow-the-sun gaps across APAC, EMEA and Americas","Weekly root-cause review with R&D and Product","Ratify the AI approval matrix (GOV-01 to GOV-04)","One case documentation standard across all tiers"]],["Days 61-90: Scale",["Roll out AI triage with human-in-the-loop on every payment action","Convert the top 20 resolved cases into KB and self-service","Publish roadmap asks ranked by cases avoided","Launch the domain-expert career path"]]];
 const TABS=[["cmd","Command Center"],["board","Board"],["tix","Ticket"],["gov","Governance"],["intel","Intelligence"],["plan","Plan & What-if"]];
-let S,timer;
-function init(){S={tab:S?S.tab:"cmd",on:true,hf:true,clk:540,n:20430,i:0,T:[],audit:[],feed:[],kb:[],cnt:{},sel:null,done:0,auto:0,hum:0,esc:0,mt:0,br:0,prot:0,sim:{d:58,h:40,a:30,e:9}};spawn();spawn("ph");for(let k=0;k<5;k++)step(1);}
+let S,timer,lastDown=0,lastHtml="";
+function init(){const tab=S?S.tab:"cmd";S={tab,on:true,hf:true,clk:540,n:20430,i:0,T:[],audit:[],feed:[],kb:[],cnt:{},sel:null,done:0,auto:0,hum:0,esc:0,mt:0,br:0,prot:0,brief:"",sim:{d:58,h:40,a:30,e:9}};spawn();spawn("ph");for(let k=0;k<5;k++)step(1);}
 function cm(t,w,x,y){t.c.push({w,x,m:S.clk,y})}
 function feed(t,x){S.feed.unshift({m:S.clk,k:t.k,x,f:t.s.cn});S.feed.length=Math.min(S.feed.length,40)}
 function aud(w,a,t){S.audit.unshift({m:S.clk,w,a,k:t.k})}
@@ -146,47 +148,49 @@ const slaL=t=>t.s.sla-t.age,fmtL=m=>m<0?"BREACHED":(m>=120?Math.floor(m/60)+"h "
 const sla=()=>S.done?Math.round((S.done-S.br)/S.done*100):100,mttr=()=>S.done?Math.round(S.mt/S.done):0;
 function cmd(){const reg=["Americas","EMEA","APAC"].map(r=>[r,open().filter(t=>t.s.reg===r).length]);
 return `<div class="grid">`+[["Resolved",S.done],["Auto-resolved",S.auto],["Human-approved",S.hum],["Awaiting approval",pend().length],["Avg time to resolve",mttr()+"m"],["SLA attainment",sla()+"%"]].map(([a,b])=>`<div class="card k"><b>${b}</b><span>${a}</span></div>`).join("")+`<div class="card k hot"><b>${money(S.prot)}</b><span>Payroll exposure protected</span></div></div>
-<div class="grid g2" style="margin-top:.9rem"><div class="card"><h3>Live activity</h3><div class="feed">${S.feed.slice(0,11).map(f=>`<div>${hm(f.m)} ${f.f} <code data-a="open:${f.k}">${f.k}</code> ${esc(f.x)}</div>`).join("")}</div></div>
+<div class="grid g2" style="margin-top:.9rem"><div class="card"><h3>Live activity</h3><div class="feed">${S.feed.slice(0,11).map(f=>`<div>${hm(f.m)} ${cc(f.f)} <code data-a="open:${f.k}">${f.k}</code> ${esc(f.x)}</div>`).join("")}</div></div>
 <div class="card"><h3>Open load by region</h3>${reg.map(r=>`<div class="row"><span>${r[0]}</span><span>${r[1]} open</span></div><div class="bar"><i style="width:${Math.min(100,r[1]*25)}%"></i></div>`).join("")}<p class="note" style="margin-top:1rem">Operating rule: AI investigates everything, acts alone only on low-risk how-tos, and every payment action waits for a named human approver.</p><p class="note">Toggle <b>Hands-free demo</b> off to become the approver yourself.</p></div></div>`}
-function board(){const cols=[[0],[1],[2],[3],[4,5]];return `<div class="board">`+cols.map(c=>{const ts=S.T.filter(t=>c.includes(t.st)).slice(0,c[0]===4?6:20);return `<div class="col"><h3>${ST[c[0]]} · ${ts.length}</h3>`+ts.map(t=>`<div class="tc ${t.st===3?"p":""}" data-a="open:${t.k}"><b>${t.k}</b> ${t.s.cn}<br>${esc(t.s.t.slice(0,70))}…<br><small style="color:${PR[t.s.pri][1]}">${PR[t.s.pri][0]} ${t.s.pri}</small> <small>· SLA ${t.st<4?fmtL(slaL(t)):"met"}</small></div>`).join("")+`</div>`}).join("")+`</div>`}
+function board(){const cols=[[0],[1],[2],[3],[4,5]];return `<div class="board">`+cols.map(c=>{const ts=S.T.filter(t=>c.includes(t.st)).slice(0,c[0]===4?6:20);return `<div class="col"><h3>${ST[c[0]]} · ${ts.length}</h3>`+ts.map(t=>`<div class="tc ${t.st===3?"p":""}" data-a="open:${t.k}"><b>${t.k}</b> ${cc(t.s.cn)}<br>${esc(t.s.t.slice(0,70))}…<br><small style="color:${PR[t.s.pri][1]}">${PR[t.s.pri][0]} ${t.s.pri}</small> <small>· SLA ${t.st<4?fmtL(slaL(t)):"met"}</small></div>`).join("")+`</div>`}).join("")+`</div>`}
 function tix(){const t=cur();if(!t)return"";const s=t.s,p=PR[s.pri];
 return `<div class="chips">${open().slice(0,6).map(x=>`<button class="b ${x.k===t.k?"on":""}" data-a="open:${x.k}">${x.s.cn} ${x.k}</button>`).join("")}</div>
 <div class="jira"><div class="jb">Projects / Global Payroll Support / <b>${t.k}</b></div><h2>${esc(s.t)}</h2>
 <div style="display:flex;gap:.5rem;align-items:center;flex-wrap:wrap"><span class="lz s${t.st}">${ST[t.st]}</span>${t.st===3?`<button class="b ok pulse" data-a="ok:${t.k}">✓ Approve and run</button><button class="b no" data-a="no:${t.k}">Reject</button>`:""}</div>
-<div class="jg"><div><h3>Description</h3><p>${esc(s.co)} (${s.cn} ${s.reg}) reported: <i>${esc(s.t)}</i><br>Impact: ${s.aff.toLocaleString()} ${s.u}${s.exp?`. Estimated exposure ${money(s.exp)}.`:"."} Raised via Customer Portal, environment prod.</p>
-${t.st>=2?`<h3>Evidence</h3><pre>${s.logs.map(l=>`${hm(t.ct||540)} ${l[1]} ${l[0]} ${esc(l[2])}`).join("\n")}</pre><pre>${esc(s.sql)}</pre>`:""}
+<div class="jg"><div><h3>Description</h3><p>${esc(s.co)} (${s.cn}, ${s.reg}) reported: <i>${esc(s.t)}</i><br>Impact: ${s.aff.toLocaleString()} ${s.u}${s.exp?`. Estimated exposure ${money(s.exp)}.`:"."} Raised via Customer Portal, environment prod.</p>
+${t.st>=2?`<h3>Evidence</h3><pre>${s.logs.map(l=>`${hm(t.ct)} ${l[1]} ${l[0]} ${esc(l[2])}`).join("\n")}</pre><pre>${esc(s.sql)}</pre>`:""}
 ${t.st>=3?`<h3>Customer reply ${t.st===4?"(sent)":"(draft, queued)"}</h3><pre>Hello ${esc(s.co)} team,\n\nWe have identified the cause affecting ${s.aff.toLocaleString()} ${s.u}: ${esc(s.rc)}\n\nNext step: ${esc(s.fix)}.\nNo action is needed from you unless we contact you.\n\nKind regards,\nGlobal Payroll Support</pre>`:""}
 <h3>Activity</h3>${t.c.map(c=>`<div class="cm"><div class="av ${c.y}">${c.y==="ai"?"AI":c.y==="h"?"HS":"CS"}</div><div><b>${esc(c.w)}</b> <small>${hm(c.m)} today</small><p>${esc(c.x)}</p></div></div>`).join("")||'<p class="note">No activity yet.</p>'}</div>
-<div><h3>Details</h3><div class="jp"><div><span>Status</span><b>${ST[t.st]}</b></div><div><span>Priority</span><b style="color:${p[1]}">${p[0]} ${s.pri}</b></div><div><span>Assignee</span><b>${t.st<1?"Unassigned":t.st===3?(s.risk==="pay"?"Payment Services Lead":"Tier 2 Lead"):AI}</b></div><div><span>Reporter</span><b>${esc(s.co)}</b></div><div><span>Component</span><b>${esc(s.comp)}</b></div><div><span>Region</span><b>${s.cn} ${s.reg}</b></div><div><span>Labels</span><b>${s.risk==="pay"?"payments, human-only":s.risk==="appr"?"needs-approval":"auto-eligible"}</b></div><div><span>SLA</span><b style="color:${t.st<4&&slaL(t)<0?"#de350b":"inherit"}">${t.st<4?fmtL(slaL(t)):"Met"}</b></div><div><span>AI confidence</span><b>${s.conf}%</b></div><div><span>Linked</span><b>${s.plat[0]}</b></div></div>
+<div><h3>Details</h3><div class="jp"><div><span>Status</span><b>${ST[t.st]}</b></div><div><span>Priority</span><b style="color:${p[1]}">${p[0]} ${s.pri}</b></div><div><span>Assignee</span><b>${t.st<1?"Unassigned":t.st===3?(s.risk==="pay"?"Payment Services Lead":"Tier 2 Lead"):AI}</b></div><div><span>Reporter</span><b>${esc(s.co)}</b></div><div><span>Component</span><b>${esc(s.comp)}</b></div><div><span>Region</span><b>${s.cn}, ${s.reg}</b></div><div><span>Labels</span><b>${s.risk==="pay"?"payments, human-only":s.risk==="appr"?"needs-approval":"auto-eligible"}</b></div><div><span>SLA</span><b style="color:${t.st<4&&slaL(t)<0?"#de350b":"inherit"}">${t.st<4?fmtL(slaL(t)):"Met"}</b></div><div><span>AI confidence</span><b>${s.conf}%</b></div><div><span>Linked</span><b>${s.plat[0]}</b></div></div>
 <h3>Linked issue</h3><p><b style="color:#0052cc">${s.plat[0]}</b> ${esc(s.plat[1])}<br><span class="lz s1">${s.plat[2]}</span></p></div></div></div>`}
 function gov(){return `<div class="grid g2"><div class="card"><h3>Approval matrix</h3><div class="scroll"><table><tr><th>Action</th><th>Autonomy</th><th>Policy</th></tr>${ACT.map(a=>`<tr><td>${a[0]}</td><td><span class="tag">${a[1]}</span></td><td>${a[2]}</td></tr>`).join("")}</table></div><p class="note">Anything below 80% confidence is routed to a human regardless of category.</p></div>
-<div class="card"><h3>Approval queue</h3>${pend().map(t=>`<div class="row"><span>${t.s.cn} <b data-a="open:${t.k}" style="cursor:pointer">${t.k}</b><br><span class="note">${esc(t.s.fix)}</span></span><span style="white-space:nowrap"><button class="b ok" data-a="ok:${t.k}">Approve</button> <button class="b no" data-a="no:${t.k}">Reject</button></span></div>`).join("")||'<p class="note">Nothing waiting. Inject an incident to see an approval request.</p>'}</div></div>
+<div class="card"><h3>Approval queue</h3>${pend().map(t=>`<div class="row"><span>${cc(t.s.cn)} <b data-a="open:${t.k}" style="cursor:pointer">${t.k}</b><br><span class="note">${esc(t.s.fix)}</span></span><span style="white-space:nowrap"><button class="b ok" data-a="ok:${t.k}">Approve</button> <button class="b no" data-a="no:${t.k}">Reject</button></span></div>`).join("")||'<p class="note">Nothing waiting. Inject an incident to see an approval request.</p>'}</div></div>
 <div class="card" style="margin-top:.9rem"><h3>Audit trail</h3><div class="feed">${S.audit.slice(0,14).map(a=>`<div>${hm(a.m)} <b>${esc(a.w)}</b> · ${a.a} · <code data-a="open:${a.k}">${a.k}</code></div>`).join("")||'<p class="note">No events yet.</p>'}</div></div>`}
-function intel(){return `<div class="card"><h3>Root cause to roadmap</h3><div class="scroll"><table><tr><th>Recurring issue</th><th>Cases this qtr</th><th>Linked JIRA</th><th>Status</th></tr>${SC.slice().sort((a,b)=>(b.base+(S.cnt[b.id]||0))-(a.base+(S.cnt[a.id]||0))).map(s=>`<tr><td>${s.cn} ${esc(s.kb)}</td><td><b>${s.base+(S.cnt[s.id]||0)}</b></td><td>${s.plat[0]} ${esc(s.plat[1])}</td><td><span class="tag">${s.plat[2]}</span></td></tr>`).join("")}</table></div><p class="note">Counts grow live as the desk resolves tickets, so R&D sees cases avoided, not just complaints.</p></div>
-<div class="grid g2" style="margin-top:.9rem"><div class="card"><h3>Knowledge loop</h3>${S.kb.slice(0,6).map((k,i)=>`<div class="row"><span>${esc(k.t)}<br><span class="note">from ${k.k}</span></span>${k.p?'<span class="tag">Published</span>':`<button class="b" data-a="pub:${i}">Review and publish</button>`}</div>`).join("")||'<p class="note">Articles appear as tickets resolve.</p>'}<p class="note">Every resolved case becomes an article. A human reviews before it goes live.</p></div>
-<div class="card"><h3>Executive brief</h3><button class="b on" data-a="brief">Generate weekly brief</button><pre class="dk" id="brief" hidden></pre></div></div>`}
+function intel(){return `<div class="card"><h3>Root cause to roadmap</h3><div class="scroll"><table><tr><th>Recurring issue</th><th>Cases this qtr</th><th>Linked JIRA</th><th>Status</th></tr>${SC.slice().sort((a,b)=>(b.base+(S.cnt[b.id]||0))-(a.base+(S.cnt[a.id]||0))).map(s=>`<tr><td>${cc(s.cn)} ${esc(s.kb)}</td><td><b>${s.base+(S.cnt[s.id]||0)}</b></td><td>${s.plat[0]} ${esc(s.plat[1])}</td><td><span class="tag">${s.plat[2]}</span></td></tr>`).join("")}</table></div><p class="note">Counts grow live as the desk resolves tickets, so R&amp;D sees cases avoided, not just complaints.</p></div>
+<div class="grid g2" style="margin-top:.9rem"><div class="card"><h3>Knowledge loop</h3>${S.kb.slice(0,6).map((k,i)=>`<div class="row"><span>${esc(k.t)}<br><span class="note">from ${k.k}</span></span>${k.p?'<span class="tag">Published</span>':`<button class="b" data-a="pub:${k.k}">Review and publish</button>`}</div>`).join("")||'<p class="note">Articles appear as tickets resolve.</p>'}<p class="note">Every resolved case becomes an article. A human reviews before it goes live.</p></div>
+<div class="card"><h3>Executive brief</h3><button class="b on" data-a="brief">Generate weekly brief</button>${S.brief?`<pre class="dk">${esc(S.brief)}</pre>`:""}</div></div>`}
 function plan(){const s=S.sim;return `<div class="grid g2">${PLAN.map(p=>`<div class="card"><h3>${p[0]}</h3><ul>${p[1].map(i=>`<li>${i}</li>`).join("")}</ul></div>`).join("")}</div><h2 style="margin-top:1.2rem">What-if simulator</h2><p class="note">Illustrative model, not a forecast.</p><div class="grid">${[["d","AI deflection %",0,90],["h","Agents",10,80],["a","Automation coverage %",0,80],["e","Escalation rate %",2,25]].map(([k,l,a,b])=>`<div class="card"><label>${l}: <b id="v${k}">${s[k]}</b><input type="range" id="r${k}" min="${a}" max="${b}" value="${s[k]}"></label></div>`).join("")}</div><div class="grid" style="margin-top:.9rem"><div class="card k"><b id="oc"></b><span>Monthly cost index</span></div><div class="card k"><b id="os"></b><span>SLA attainment</span></div><div class="card k"><b id="oq"></b><span>CSAT</span></div></div>`}
 function calc(){const s=S.sim;$("#oc").textContent=((100-s.d*.6-s.a*.3)*s.h/100*12).toFixed(0);$("#os").textContent=Math.min(99,Math.round(78+s.h*.1+s.a*.15+s.d*.12-s.e*.8))+"%";$("#oq").textContent=Math.min(98,Math.round(70+s.d*.1+s.a*.1+s.h*.1-s.e*.5))}
 const V={cmd,board,tix,gov,intel,plan};
-function render(){$("#nav").innerHTML=TABS.map(([k,l])=>`<button class="${S.tab===k?"cur":""}" data-a="tab:${k}">${l}</button>`).join("");$("#view").innerHTML=V[S.tab]();if(S.tab==="plan")calc();hud()}
+function render(){$("#nav").innerHTML=TABS.map(([k,l])=>`<button class="${S.tab===k?"cur":""}" data-a="tab:${k}">${l}</button>`).join("");
+ const html=V[S.tab]()+"";if(html!==lastHtml){const y=window.scrollY;$("#view").innerHTML=html;lastHtml=html;window.scrollTo(0,y)}
+ if(S.tab==="plan")calc();hud()}
 function hud(){$("#clk").textContent="Sim clock "+hm(S.clk)+" UTC";$("#pend").textContent=pend().length;$("#live").classList.toggle("off",!S.on)}
-let dn=false;addEventListener("mousedown",()=>dn=true);addEventListener("mouseup",()=>setTimeout(()=>dn=false,0));
-function ui(){if(S.tab==="plan"||dn){hud();return}const b=$("#brief");if(b&&!b.hidden){hud();return}render()}
-function loop(){clearInterval(timer);if(S.on)timer=setInterval(step,+$("#spd").value)}
-document.addEventListener("click",e=>{const el=e.target.closest("[data-a]");if(!el)return;const[a,v]=el.dataset.a.split(":");
+addEventListener("pointerdown",()=>{lastDown=Date.now()});
+function ui(){if(S.tab==="plan"||Date.now()-lastDown<700){hud();return}render()}
+function loop(){clearInterval(timer);if(S.on)timer=setInterval(()=>step(),+$("#spd").value)}
+document.addEventListener("click",e=>{const el=e.target.closest("[data-a]");if(!el)return;const i=el.dataset.a.indexOf(":"),a=i<0?el.dataset.a:el.dataset.a.slice(0,i),v=i<0?"":el.dataset.a.slice(i+1);
 if(a==="tab"){S.tab=v;location.hash=v}else if(a==="open"){S.sel=v;S.tab="tix"}
 else if(a==="ok"||a==="no")decide(v,a==="ok","You · Head of Support");
 else if(a==="tog"){S.on=!S.on;el.textContent=S.on?"⏸ Autopilot ON":"▶ Autopilot PAUSED";el.classList.toggle("on",S.on);loop()}
 else if(a==="hf"){S.hf=!S.hf;el.textContent="Hands-free demo: "+(S.hf?"ON":"OFF");el.classList.toggle("on",S.hf)}
 else if(a==="step")step(1);
-else if(a==="inj"){const t=spawn($("#injs").value);S.sel=t.k}
+else if(a==="inj"){const t=spawn($("#injs").value);S.sel=t.k;S.tab="tix";location.hash="tix"}
 else if(a==="rst"){init();loop()}
-else if(a==="pub"){S.kb[+v].p=true;aud("You · Head of Support","Published KB article",{k:S.kb[+v].k})}
-else if(a==="brief"){const top=SC.slice().sort((a,b)=>(b.base+(S.cnt[b.id]||0))-(a.base+(S.cnt[a.id]||0)))[0],o=$("#brief");o.hidden=false;o.textContent=`WEEKLY SUPPORT BRIEF · sim ${hm(S.clk)} UTC\nResolved ${S.done} (${S.auto} automated, ${S.hum} human-approved, ${S.esc} escalated)\nSLA attainment ${sla()}% · avg time to resolve ${mttr()} min\nPayroll exposure protected: ${money(S.prot)}\nTop driver: ${top.kb} (${top.base+(S.cnt[top.id]||0)} cases)\nAsk to R&D and Product: ${top.plat[1]} (${top.plat[0]}, ${top.plat[2]})\nRisk to watch: APAC night-shift coverage and PHP/AED cut-off windows.`;return}
+else if(a==="pub"){const k=S.kb.find(x=>x.k===v);if(k){k.p=true;aud("You · Head of Support","Published KB article",{k:v})}}
+else if(a==="brief"){const top=SC.slice().sort((a,b)=>(b.base+(S.cnt[b.id]||0))-(a.base+(S.cnt[a.id]||0)))[0];S.brief=`WEEKLY SUPPORT BRIEF · sim ${hm(S.clk)} UTC\nResolved ${S.done} (${S.auto} automated, ${S.hum} human-approved, ${S.esc} escalated)\nSLA attainment ${sla()}% · avg time to resolve ${mttr()} min\nPayroll exposure protected: ${money(S.prot)}\nTop driver: ${top.kb} (${top.base+(S.cnt[top.id]||0)} cases)\nAsk to R&D and Product: ${top.plat[1]} (${top.plat[0]}, ${top.plat[2]})\nRisk to watch: APAC night-shift coverage and PHP/AED cut-off windows.`}
 render()});
-document.addEventListener("input",e=>{const k=e.target.id&&e.target.id[0]==="r"&&e.target.id.length===2?e.target.id[1]:null;if(k){S.sim[k]=+e.target.value;$("#v"+k).textContent=S.sim[k];calc()}});
+document.addEventListener("input",e=>{const id=e.target.id||"";if(/^r[daeh]$/.test(id)){const k=id[1];S.sim[k]=+e.target.value;$("#v"+k).textContent=S.sim[k];calc()}});
 $("#spd").onchange=loop;$("#injs").innerHTML=SC.map(s=>`<option value="${s.id}">${s.cn} ${esc(s.comp.split(" · ")[1])}: ${esc(s.t.slice(0,26))}…</option>`).join("");
-const h0=location.hash.slice(1);init();if(TABS.some(t=>t[0]===h0))S.tab=h0;
+init();{const h=location.hash.slice(1);if(TABS.some(t=>t[0]===h))S.tab=h}
 addEventListener("hashchange",()=>{const h=location.hash.slice(1);if(TABS.some(t=>t[0]===h)&&h!==S.tab){S.tab=h;render()}});
 render();loop();
 </script>
